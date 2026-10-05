@@ -1,801 +1,427 @@
 <!DOCTYPE html>
-<html lang="th" class="h-full">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLACK PIG DESIGN - แบบงานสำเร็จรูปและตัวอย่างผลงาน</title>
-    <!-- Tailwind CSS -->
+    <title>BLACK PIG DESIGN - แคตตาล็อกสินค้าและบริการ</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Prompt', sans-serif; }
+        body { font-family: 'Sarabun', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 h-full flex flex-col" x-data="shopApp()">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between" x-data="blackPigApp()">
 
     <!-- Header / Navbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" @click="currentView = 'frontend'; selectedCategory = 'all'">
-                <div class="bg-gray-900 text-white p-2.5 rounded-xl font-bold text-xl tracking-wider">BP</div>
-                <div>
-                    <h1 class="text-xl font-bold text-gray-900">BLACK PIG DESIGN</h1>
-                    <p class="text-xs text-gray-500">แบบงานสำเร็จรูปและตัวอย่างผลงาน</p>
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" @click="currentView = 'home'; selectedGroup = null;">
+                <span class="text-2xl font-bold tracking-wider text-amber-400">BLACK PIG DESIGN</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <!-- Social Links -->
+                <div class="hidden md:flex items-center space-x-3">
+                    <a href="https://www.facebook.com/blackpigdesign/" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">Facebook</a>
+                    <a href="https://www.instagram.com/blackpigdesign?stkn=Z3d4YWpkcmcyOHU1&utm_source=qr" target="_blank" class="bg-pink-600 hover:bg-pink-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">IG</a>
+                    <a href="https://www.tiktok.com/@blackpigdesign1?is_from_webapp=1&sender_device=pc" target="_blank" class="bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition border border-gray-700">TikTok</a>
+                    <a href="https://lin.ee/8iLNK3h" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">LINE@</a>
                 </div>
-            </div>
-            
-            <div class="flex items-center space-x-3">
-                <!-- If logged in as Admin, show Backend / Frontend toggle buttons & Change Password button -->
-                <template x-if="isAdminLoggedIn">
-                    <div class="flex items-center space-x-2 bg-gray-100 p-1 rounded-2xl border border-gray-200">
-                        <button @click="currentView = 'frontend'; selectedCategory = 'all'" 
-                                :class="currentView === 'frontend' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'"
-                                class="px-3.5 py-2 rounded-xl text-xs font-semibold transition">
-                            หน้าร้าน
-                        </button>
-                        <button @click="currentView = 'backend'" 
-                                :class="currentView === 'backend' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'"
-                                class="px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center space-x-1">
-                            <span>หลังบ้านแอดมิน</span>
-                        </button>
-                        <button @click="showChangePasswordModal = true" class="px-3 py-2 text-indigo-600 hover:bg-indigo-50 rounded-xl text-xs font-semibold transition" title="เปลี่ยนรหัสผ่าน">
-                            🔑 เปลี่ยนรหัส
-                        </button>
-                        <button @click="logoutAdmin()" class="px-3 py-2 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition" title="ออกจากระบบ">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        </button>
-                    </div>
-                </template>
 
-                <!-- If not logged in as Admin -->
-                <template x-if="!isAdminLoggedIn">
-                    <button @click="showLoginModal = true" class="text-gray-400 hover:text-gray-600 p-2.5 rounded-xl transition text-xs flex items-center space-x-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        <span>เข้าสู่ระบบแอดมิน</span>
-                    </button>
-                </template>
+                <!-- Admin Button -->
+                <button @click="isAdminOpen = true" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-2 rounded-lg font-semibold text-sm transition shadow">
+                    <span x-text="isLoggedIn ? 'เมนูจัดการแอดมิน' : 'เข้าสู่ระบบแอดมิน'"></span>
+                </button>
             </div>
+        </div>
+        <div class="md:hidden bg-slate-800 px-4 py-2 flex justify-around border-t border-slate-700 text-xs">
+            <a href="https://www.facebook.com/blackpigdesign/" target="_blank" class="text-blue-400 font-medium">Facebook</a>
+            <a href="https://www.instagram.com/blackpigdesign?stkn=Z3d4YWpkcmcyOHU1&utm_source=qr" target="_blank" class="text-pink-400 font-medium">Instagram</a>
+            <a href="https://www.tiktok.com/@blackpigdesign1?is_from_webapp=1&sender_device=pc" target="_blank" class="text-gray-200 font-medium">TikTok</a>
+            <a href="https://lin.ee/8iLNK3h" target="_blank" class="text-emerald-400 font-medium">LINE@</a>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <!-- ==================== FRONTEND VIEW ==================== -->
-        <div x-show="currentView === 'frontend'" class="space-y-8">
-            <!-- Hero Banner & Intro -->
-            <div class="rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden bg-cover bg-center"
-                 :style="homepage.coverImage ? 'background-image: linear-gradient(to right, rgba(17, 24, 39, 0.92), rgba(30, 27, 75, 0.90)), url(' + homepage.coverImage + ');' : 'background: linear-gradient(to right, #111827, #311052);'">
-                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="max-w-2xl relative z-10">
-                    <span class="bg-indigo-500/30 text-indigo-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" x-text="homepage.badge"></span>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 tracking-tight" x-text="homepage.title"></h2>
-                    <p class="text-gray-300 mt-2 text-sm sm:text-base leading-relaxed" x-text="homepage.description"></p>
-                    
-                    <!-- Social Links Bar -->
-                    <div class="mt-6 flex flex-wrap items-center gap-3">
-                        <a :href="socials.facebook" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 shadow-sm">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                            <span>Facebook</span>
-                        </a>
-                        <a :href="socials.instagram" target="_blank" class="bg-gradient-to-tr from-yellow-500 via-pink-600 to-purple-700 hover:opacity-90 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 shadow-sm">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                            <span>Instagram</span>
-                        </a>
-                        <a :href="socials.tiktok" target="_blank" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 shadow-sm border border-gray-700">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.13z"/></svg>
-                            <span>Tiktok</span>
-                        </a>
-                        <a :href="socials.line" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 shadow-sm">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .336-.236.63-.63.63-.33 0-.63-.228-.63-.63V8.108c0-.345.297-.63.63-.63.394 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.63-.63.63-.345 0-.63-.286-.63-.63V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.771zm2.463 0c0 .336-.234.63-.627.63-.339 0-.63-.228-.63-.63V8.108c0-.345.291-.63.63-.63.393 0 .627.285.627.63v4.771zm-9.043-4.771c.348 0 .63.285.63.63v4.141h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629H2.63c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63h3.69z"/></svg>
-                            <span>Line@</span>
-                        </a>
-                    </div>
-                </div>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- Breadcrumb / Back button when viewing group -->
+        <template x-if="selectedGroup !== null">
+            <div class="mb-6 flex items-center justify-between">
+                <button @click="selectedGroup = null" class="bg-gray-200 hover:bg-gray-300 text-slate-800 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center space-x-1">
+                    <span>&larr; กลับหน้าหมวดหมู่สินค้า</span>
+                </button>
+                <h2 class="text-2xl font-bold text-slate-900" x-text="getGroupName(selectedGroup)"></h2>
             </div>
+        </template>
 
-            <!-- VIEW MODE 1: Category Selection -->
-            <div x-show="selectedCategory === 'all'" class="space-y-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-900">เลือกหมวดหมู่ผลงาน</h3>
-                        <p class="text-gray-500 text-sm mt-1">คลิกเลือกหมวดหมู่ที่ต้องการเพื่อดูแบบที่มีทั้งหมด</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <template x-for="cat in categories" :key="cat">
-                        <div @click="selectedCategory = cat" class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 cursor-pointer group flex flex-col justify-between relative overflow-hidden">
-                            <div class="absolute right-0 top-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-0 group-hover:bg-indigo-600 transition duration-300 opacity-50"></div>
-                            <div class="relative z-10">
-                                <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-white group-hover:text-indigo-600 transition shadow-sm">
-                                    📂
-                                </div>
-                                <h4 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition" x-text="cat"></h4>
-                                <p class="text-sm text-gray-500 mt-1" x-text="products.filter(p => p.category === cat).length + ' แบบในหมวดหมู่นี้'"></p>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between relative z-10 text-sm font-semibold text-indigo-600">
-                                <span>คลิกดูแบบทั้งหมด</span>
-                                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                            </div>
-                        </div>
-                    </template>
-                </div>
+        <template x-if="selectedGroup === null">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">แคตตาล็อกสินค้าและบริการ BLACK PIG DESIGN</h1>
+                <p class="text-gray-600">เลือกหมวดหมู่สินค้าที่คุณต้องการชม</p>
             </div>
+        </template>
 
-            <!-- VIEW MODE 2: Category Product Gallery -->
-            <div x-show="selectedCategory !== 'all'" class="space-y-6" x-cloak>
-                <div class="flex items-center justify-between bg-white p-4 sm:px-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="flex items-center space-x-3">
-                        <button @click="selectedCategory = 'all'" class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-xl transition flex items-center space-x-1 text-sm font-medium">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                            <span>กลับหน้าหมวดหมู่</span>
-                        </button>
-                        <span class="text-gray-300">/</span>
-                        <h3 class="text-lg font-bold text-gray-900" x-text="selectedCategory"></h3>
-                        <span class="bg-indigo-50 text-indigo-600 text-xs font-semibold px-2.5 py-1 rounded-lg" x-text="filteredProducts.length + ' แบบ'"></span>
-                    </div>
-
-                    <select x-model="selectedCategory" class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="all">📁 ทุกหมวดหมู่</option>
-                        <template x-for="cat in categories" :key="cat">
-                            <option :value="cat" x-text="cat"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <!-- Product Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <template x-for="product in filteredProducts" :key="product.id">
-                        <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 flex flex-col">
-                            <div class="relative w-full aspect-square bg-gray-100 overflow-hidden group cursor-pointer" @click="openLightbox(product)">
-                                <img :src="product.image" :alt="product.name" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                                <span class="absolute top-3 left-3 bg-black/70 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-xl uppercase tracking-wider" x-text="product.code"></span>
-                                <span class="absolute top-3 right-3 bg-indigo-600 text-white text-xs font-medium px-3 py-1.5 rounded-xl" x-text="product.category"></span>
-                                <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center space-x-2 text-white font-medium text-sm">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                                    <span>คลิกดูภาพใหญ่</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex-1 flex flex-col justify-between">
-                                <div>
-                                    <h3 class="text-lg font-bold text-gray-900" x-text="product.name"></h3>
-                                    <p class="text-gray-500 text-sm mt-1 line-clamp-2" x-text="product.description || 'ไม่มีรายละเอียดเพิ่มเติม'"></p>
-                                </div>
-                                <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                                    <span class="text-xs font-medium text-gray-400">รหัสสั่งซื้อ: <strong class="text-indigo-600" x-text="product.code"></strong></span>
-                                    <div class="flex items-center space-x-2">
-                                        <button @click="openLightbox(product)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-xl text-sm transition" title="ดูภาพใหญ่">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                        </button>
-                                        <button @click="openOrderModal(product)" class="bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                                            <span>สนใจแบบนี้</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== BACKEND VIEW (Admin Only) ==================== -->
-        <div x-show="currentView === 'backend' && isAdminLoggedIn" class="space-y-8" x-cloak>
+        <!-- VIEW 1: Product Groups Grid -->
+        <template x-if="selectedGroup === null">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                    <div class="bg-indigo-50 text-indigo-600 p-4 rounded-2xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-400">ผลงานทั้งหมด</p>
-                        <h3 class="text-2xl font-bold text-gray-900 mt-1" x-text="products.length + ' รายการ'"></h3>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                    <div class="bg-emerald-50 text-emerald-600 p-4 rounded-2xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-400">หมวดหมู่ทั้งหมด</p>
-                        <h3 class="text-2xl font-bold text-gray-900 mt-1" x-text="categories.length + ' หมวดหมู่'"></h3>
-                    </div>
-                </div>
-                <div class="bg-gradient-to-br from-indigo-900 to-gray-900 p-6 rounded-3xl text-white flex flex-col justify-between shadow-md">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs uppercase tracking-wider text-indigo-300 font-semibold">จัดการด่วน</span>
-                        <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    </div>
-                    <button @click="openAddModal()" class="mt-4 bg-white text-gray-900 hover:bg-indigo-50 font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        <span>+ เพิ่มผลงานใหม่</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Homepage Setup -->
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">ตั้งค่าหน้าแรก (Homepage & Hero Banner)</h3>
-                        <p class="text-sm text-gray-500">ปรับแต่งข้อความ ป้ายกำกับ และรูปภาพหน้าปก (Cover Image) ด้านบนของหน้าร้าน</p>
-                    </div>
-                    <button @click="saveHomepage()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm flex items-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span>บันทึกหน้าแรก</span>
-                    </button>
-                </div>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <template x-for="group in groups" :key="group.id">
+                    <div @click="selectedGroup = group.id" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition cursor-pointer flex flex-col justify-between group">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ป้ายกำกับด้านบน (Badge)</label>
-                            <input type="text" x-model="homepage.badge" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">หัวข้อหลัก (Title)</label>
-                            <input type="text" x-model="homepage.title" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">ข้อความรายละเอียด (Description)</label>
-                        <textarea x-model="homepage.description" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">รูปภาพหน้าปก (Hero Cover Image)</label>
-                        <div class="flex items-center space-x-4">
-                            <div class="w-32 h-20 bg-gray-100 rounded-2xl overflow-hidden border border-gray-200 flex-shrink-0 flex items-center justify-center">
-                                <template x-if="homepage.coverImage">
-                                    <img :src="homepage.coverImage" class="w-full h-full object-cover">
-                                </template>
-                                <template x-if="!homepage.coverImage">
-                                    <span class="text-xs text-gray-400">ไม่มีภาพปก</span>
-                                </template>
+                            <div class="w-full h-48 bg-gray-100 overflow-hidden relative">
+                                <img :src="group.image || 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=60'" alt="รูปหมวดหมู่" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" @error="$event.target.src='https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=60'">
                             </div>
-                            <div class="flex-1">
-                                <input type="file" accept="image/*" @change="handleCoverUpload" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer">
-                                <p class="text-xs text-gray-400 mt-1">แนะนำรูปภาพแบนเนอร์แนวนอน ความละเอียดสูง</p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-slate-900 mb-1" x-text="group.name"></h3>
+                                <p class="text-gray-500 text-sm" x-text="getItemsCount(group.id) + ' รายการสินค้า'"></p>
                             </div>
                         </div>
+                        <div class="p-6 pt-0">
+                            <span class="block text-center bg-slate-900 text-white text-sm px-4 py-2 rounded-lg group-hover:bg-amber-500 group-hover:text-slate-900 transition font-medium">ดูสินค้าในหมวดหมู่นี้</span>
+                        </div>
                     </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- VIEW 2: Products Inside Group -->
+        <template x-if="selectedGroup !== null">
+            <div>
+                <template x-if="getProductsByGroup(selectedGroup).length === 0">
+                    <div class="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
+                        <p class="text-gray-500 mb-2">ยังไม่มีสินค้าในหมวดหมู่นี้</p>
+                        <p class="text-xs text-gray-400">แอดมินสามารถเพิ่มสินค้าได้ผ่านเมนูจัดการหลังบ้าน</p>
+                    </div>
+                </template>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <template x-for="product in getProductsByGroup(selectedGroup)" :key="product.id">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition flex flex-col justify-between">
+                            <div>
+                                <div class="w-full h-56 bg-gray-100 relative overflow-hidden">
+                                    <img :src="fixImageUrl(product.image)" alt="รูปสินค้า" class="w-full h-full object-cover" @error="$event.target.src='https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=60'">
+                                    <span class="absolute top-2 left-2 bg-slate-900/80 text-amber-400 text-xs font-bold px-2.5 py-1 rounded-md shadow" x-text="'รหัส: ' + product.code"></span>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold text-slate-900 mb-2" x-text="product.title"></h3>
+                                    <p class="text-gray-600 text-sm mb-4" x-text="product.desc"></p>
+                                </div>
+                            </div>
+                            <div class="p-6 pt-0">
+                                <button @click="orderProduct(product)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition shadow flex items-center justify-center space-x-2">
+                                    <span>เลือกสินค้านี้ (สั่งซื้อ/สอบถามทาง LINE)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
-
-            <!-- Social Links -->
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">ตั้งค่าลิงก์โซเชียลมีเดียของร้าน</h3>
-                        <p class="text-sm text-gray-500">ใส่ลิงก์เพจหรือช่องทางติดต่อเพื่อให้ลูกค้ากดไปยังหน้าโซเชียลของคุณได้ทันที</p>
-                    </div>
-                    <button @click="saveSocials()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm flex items-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span>บันทึกโซเชียล</span>
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
-                        <input type="text" x-model="socials.facebook" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
-                        <input type="text" x-model="socials.instagram" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tiktok URL</label>
-                        <input type="text" x-model="socials.tiktok" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Line@ URL</label>
-                        <input type="text" x-model="socials.line" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product Management Table -->
-            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="p-6 sm:p-8 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">รายการผลงานทั้งหมด</h3>
-                        <p class="text-sm text-gray-500">จัดการ เพิ่ม แก้ไข หรือลบผลงานในระบบ</p>
-                    </div>
-                    <button @click="openAddModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        <span>เพิ่มผลงานใหม่</span>
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-400 text-xs uppercase tracking-wider font-semibold border-b border-gray-100">
-                                <th class="py-4 px-6">รูปภาพ (1:1)</th>
-                                <th class="py-4 px-6">รหัสสินค้า</th>
-                                <th class="py-4 px-6">ชื่อผลงาน</th>
-                                <th class="py-4 px-6">หมวดหมู่</th>
-                                <th class="py-4 px-6 text-center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 text-sm">
-                            <template x-for="product in products" :key="product.id">
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="py-4 px-6">
-                                        <img :src="product.image" class="w-14 h-14 aspect-square object-cover rounded-2xl shadow-sm border border-gray-200 cursor-pointer" @click="openLightbox(product)">
-                                    </td>
-                                    <td class="py-4 px-6 font-semibold text-indigo-600" x-text="product.code"></td>
-                                    <td class="py-4 px-6 font-medium text-gray-900" x-text="product.name"></td>
-                                    <td class="py-4 px-6">
-                                        <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-xl text-xs font-medium" x-text="product.category"></span>
-                                    </td>
-                                    <td class="py-4 px-6 text-center space-x-2">
-                                        <button @click="openEditModal(product)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-xl text-xs font-medium transition">แก้ไข</button>
-                                        <button @click="deleteProduct(product.id)" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-medium transition">ลบ</button>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
+        </template>
     </main>
 
-    <!-- ==================== ADMIN LOGIN MODAL ==================== -->
-    <div x-show="showLoginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak>
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-6">
-            <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-gray-900 text-white p-2 rounded-xl">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900">เข้าสู่ระบบหลังบ้านแอดมิน</h3>
-                </div>
-                <button @click="showLoginModal = false" class="text-gray-400 hover:text-gray-600 p-2 rounded-xl">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <form @submit.prevent="loginAdmin" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">อีเมลแอดมิน</label>
-                    <input type="email" x-model="loginForm.email" required placeholder="admin@blackpig.com" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
-                    <input type="password" x-model="loginForm.password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div class="flex items-center justify-between text-xs pt-1">
-                    <span class="text-gray-400">ค่าเริ่มต้น: admin@blackpig.com / blackpig2026</span>
-                    <button type="button" @click="showLoginModal = false; showForgotModal = true" class="text-indigo-600 hover:underline font-medium">ลืมรหัสผ่าน?</button>
-                </div>
-                <div class="flex items-center justify-end space-x-3 pt-2">
-                    <button type="button" @click="showLoginModal = false" class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition">ยกเลิก</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition shadow-sm">เข้าสู่ระบบ</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ==================== CHANGE PASSWORD MODAL ==================== -->
-    <div x-show="showChangePasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak>
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-6">
-            <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                <h3 class="text-xl font-bold text-gray-900">เปลี่ยนรหัสผ่านแอดมิน</h3>
-                <button @click="showChangePasswordModal = false" class="text-gray-400 hover:text-gray-600 p-2 rounded-xl">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <form @submit.prevent="changePassword" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่านเดิม</label>
-                    <input type="password" x-model="passForm.oldPass" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่านใหม่</label>
-                    <input type="password" x-model="passForm.newPass" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">ยืนยันรหัสผ่านใหม่</label>
-                    <input type="password" x-model="passForm.confirmPass" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div class="flex items-center justify-end space-x-3 pt-2">
-                    <button type="button" @click="showChangePasswordModal = false" class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition">ยกเลิก</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition shadow-sm">บันทึกรหัสใหม่</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ==================== FORGOT PASSWORD MODAL ==================== -->
-    <div x-show="showForgotModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak>
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-6">
-            <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                <h3 class="text-xl font-bold text-gray-900">กู้คืนรหัสผ่าน (ลืมรหัสผ่าน)</h3>
-                <button @click="showForgotModal = false" class="text-gray-400 hover:text-gray-600 p-2 rounded-xl">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <form @submit.prevent="resetPassword" class="space-y-4">
-                <p class="text-xs text-gray-500">กรุณากรอกรหัสลับความปลอดภัย (Security Secret Key) เพื่อตั้งรหัสผ่านใหม่ครับ (ค่าเริ่มต้นคือ: <code>blackpig2026</code> หรือรหัสลับที่คุณตั้งไว้)</p>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสลับความปลอดภัย</label>
-                    <input type="password" x-model="forgotForm.secretKey" required placeholder="รหัสลับแอดมิน" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">ตั้งรหัสผ่านใหม่</label>
-                    <input type="password" x-model="forgotForm.newPass" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div class="flex items-center justify-end space-x-3 pt-2">
-                    <button type="button" @click="showForgotModal = false" class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition">ยกเลิก</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition shadow-sm">รีเซ็ตรหัสผ่าน</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ==================== LIGHTBOX MODAL ==================== -->
-    <div x-show="showLightboxModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" x-cloak @keydown.escape.window="closeLightbox()">
-        <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center justify-center" @click.away="closeLightbox()">
-            <button @click="closeLightbox()" class="absolute -top-12 right-0 text-white hover:text-gray-300 bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <div class="relative w-full max-w-2xl aspect-square bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-                <img :src="lightboxProduct?.image" :alt="lightboxProduct?.name" class="w-full h-full object-contain">
-                <span class="absolute top-4 left-4 bg-black/70 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-xl uppercase tracking-wider" x-text="lightboxProduct?.code"></span>
-                <span class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-medium px-3 py-1.5 rounded-xl" x-text="lightboxProduct?.category"></span>
-            </div>
-            <div class="mt-4 bg-white/10 backdrop-blur-md text-white p-4 rounded-2xl w-full max-w-2xl flex items-center justify-between border border-white/10">
-                <div>
-                    <h4 class="text-lg font-bold" x-text="lightboxProduct?.name"></h4>
-                    <p class="text-sm text-gray-300 mt-0.5" x-text="lightboxProduct?.description || 'ไม่มีรายละเอียดเพิ่มเติม'"></p>
-                </div>
-                <button @click="closeLightbox(); openOrderModal(lightboxProduct)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm flex items-center space-x-2 flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                    <span>สนใจแบบนี้</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== ADD / EDIT PRODUCT MODAL ==================== -->
-    <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                <h3 class="text-xl font-bold text-gray-900" x-text="isEditMode ? 'แก้ไขข้อมูลผลงาน' : 'เพิ่มผลงานใหม่'"></h3>
-                <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-xl">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <form @submit.prevent="saveProduct" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่สินค้า *</label>
-                    <select x-model="form.category" @change="onCategoryChange()" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                        <template x-for="cat in categories" :key="cat">
-                            <option :value="cat" x-text="cat"></option>
-                        </template>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสสินค้า (รันอัตโนมัติ)</label>
-                    <input type="text" x-model="form.code" readonly class="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-indigo-600 font-bold text-sm cursor-not-allowed">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผลงาน / ชื่องาน *</label>
-                    <input type="text" x-model="form.name" required placeholder="เช่น การ์ดงานแต่ง Minimal ทองเงา" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รายละเอียดเพิ่มเติม</label>
-                    <textarea x-model="form.description" rows="3" placeholder="ระบุรายละเอียด วัสดุ ขนาด หรือหมายเหตุ..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">อัพโหลดรูปภาพผลงาน (สัดส่วน 1:1) *</label>
-                    <div class="flex items-center space-x-4">
-                        <div class="w-20 h-20 aspect-square bg-gray-100 rounded-2xl overflow-hidden border border-gray-200 flex-shrink-0 flex items-center justify-center">
-                            <template x-if="form.image">
-                                <img :src="form.image" class="w-full h-full object-cover">
-                            </template>
-                            <template x-if="!form.image">
-                                <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            </template>
-                        </div>
-                        <div class="flex-1">
-                            <input type="file" accept="image/*" @change="handleImageUpload" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer">
-                            <p class="text-xs text-gray-400 mt-1">แนะนำรูปภาพขนาดสี่เหลี่ยมจัตุรัส (1:1)</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
-                    <button type="button" @click="closeModal()" class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition">ยกเลิก</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition shadow-sm">บันทึกข้อมูล</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ==================== ORDER MODAL ==================== -->
-    <div x-show="showOrderModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-6 text-center">
-            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            </div>
-            <div>
-                <h3 class="text-xl font-bold text-gray-900">สนใจแบบผลงานนี้?</h3>
-                <p class="text-sm text-gray-500 mt-1">แจ้งรหัสสินค้ากับแอดมินทาง Line@ หรือ Inbox เพื่อสอบถามราคาและสั่งผลิตได้เลยครับ</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 flex items-center space-x-4 text-left">
-                <img :src="activeProduct?.image" class="w-16 h-16 aspect-square object-cover rounded-xl border border-gray-200">
-                <div>
-                    <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-lg" x-text="activeProduct?.code"></span>
-                    <h4 class="font-bold text-gray-900 text-sm mt-1" x-text="activeProduct?.name"></h4>
-                </div>
-            </div>
-            <div class="space-y-2">
-                <a :href="socials.line" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-medium transition flex items-center justify-center space-x-2 shadow-sm">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .336-.236.63-.63.63-.33 0-.63-.228-.63-.63V8.108c0-.345.297-.63.63-.63.394 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.63-.63.63-.345 0-.63-.286-.63-.63V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.771zm2.463 0c0 .336-.234.63-.627.63-.339 0-.63-.228-.63-.63V8.108c0-.345.291-.63.63-.63.393 0 .627.285.627.63v4.771zm-9.043-4.771c.348 0 .63.285.63.63v4.141h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629H2.63c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63h3.69z"/></svg>
-                    <span>สั่งซื้อผ่าน Line@ (แจ้งรหัส <span x-text="activeProduct?.code"></span>)</span>
-                </a>
-                <button @click="showOrderModal = false" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-medium transition">ปิดหน้าต่าง</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400">
-        <p>BLACK PIG DESIGN © 2026 - ระบบแคตตาล็อกผลงานออนไลน์ ออกแบบมาเพื่อให้ใช้งานง่ายและสะดวกที่สุด</p>
+    <footer class="bg-slate-900 text-white py-6 text-center text-sm">
+        <p>&copy; 2026 BLACK PIG DESIGN. All rights reserved.</p>
     </footer>
 
-    <!-- Alpine.js Application Logic -->
+    <!-- Admin Modal -->
+    <div x-show="isAdminOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" style="display: none;">
+        <div @click.outside="isAdminOpen = false" class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl relative max-h-[90vh] overflow-y-auto">
+            <button @click="isAdminOpen = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+
+            <!-- Not Logged In -->
+            <template x-if="!isLoggedIn">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">เข้าสู่ระบบแอดมิน</h2>
+                    <form @submit.prevent="login">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
+                            <input type="password" x-model="passwordInput" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none" required>
+                        </div>
+                        <p x-show="loginError" class="text-red-500 text-sm mb-4">รหัสผ่านไม่ถูกต้อง</p>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 rounded-lg transition">เข้าสู่ระบบ</button>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <button @click="forgotPassword" class="text-sm text-blue-600 hover:underline">ลืมรหัสผ่าน?</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Logged In / Admin Dashboard -->
+            <template x-if="isLoggedIn">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">ระบบจัดการหลังบ้าน BLACK PIG DESIGN</h2>
+                    
+                    <!-- TAB NAVIGATION -->
+                    <div class="flex space-x-2 mb-6 border-b pb-4">
+                        <button @click="adminTab = 'products'" :class="adminTab === 'products' ? 'bg-slate-900 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-2 rounded-lg text-sm font-semibold transition">จัดการสินค้า</button>
+                        <button @click="adminTab = 'groups'" :class="adminTab === 'groups' ? 'bg-slate-900 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-2 rounded-lg text-sm font-semibold transition">จัดการหมวดหมู่ (Group)</button>
+                        <button @click="adminTab = 'password'" :class="adminTab === 'password' ? 'bg-slate-900 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-2 rounded-lg text-sm font-semibold transition">เปลี่ยนรหัสผ่าน</button>
+                    </div>
+
+                    <!-- TAB 1: MANAGE PRODUCTS -->
+                    <template x-if="adminTab === 'products'">
+                        <div>
+                            <div class="mb-6 p-4 bg-gray-50 rounded-xl border">
+                                <h3 class="font-bold text-slate-900 mb-3">➕ เพิ่มสินค้าใหม่ (รหัสสินค้าจะรันอัตโนมัติ)</h3>
+                                <form @submit.prevent="addProduct">
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">เลือกหมวดหมู่สินค้า</label>
+                                        <select x-model="newProduct.groupId" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" required>
+                                            <option value="">-- เลือกหมวดหมู่ --</option>
+                                            <template x-for="g in groups" :key="g.id">
+                                                <option :value="g.id" x-text="g.name"></option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อสินค้า / ตัวอย่างงาน</label>
+                                        <input type="text" x-model="newProduct.title" placeholder="เช่น การ์ดงานแต่งแบบมินิมอล" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">รายละเอียดสินค้า</label>
+                                        <textarea x-model="newProduct.desc" placeholder="รายละเอียด เช่น ขนาด, ชนิดกระดาษ..." class="w-full px-3 py-2 border rounded-lg text-sm" rows="2" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">ลิงก์รูปภาพ (รองรับ Google Drive หรือลิงก์รูปทั่วไป)</label>
+                                        <input type="text" x-model="newProduct.image" placeholder="https://..." class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                                    </div>
+                                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg text-sm transition">บันทึกเพิ่มสินค้า</button>
+                                </form>
+                            </div>
+
+                            <!-- Product List -->
+                            <div class="p-4 bg-gray-50 rounded-xl border">
+                                <h3 class="font-bold text-slate-900 mb-3">📋 รายการสินค้าทั้งหมด</h3>
+                                <div class="space-y-2 max-h-60 overflow-y-auto">
+                                    <template x-for="(prod, index) in products" :key="prod.id">
+                                        <div class="flex justify-between items-center bg-white p-3 rounded-lg border text-sm">
+                                            <div>
+                                                <span class="font-bold text-amber-600 mr-2" x-text="'[' + prod.code + ']'"></span>
+                                                <span class="font-medium text-slate-800" x-text="prod.title"></span>
+                                            </div>
+                                            <button @click="deleteProduct(index)" class="text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1 bg-red-50 rounded border border-red-200">ลบ</button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- TAB 2: MANAGE GROUPS -->
+                    <template x-if="adminTab === 'groups'">
+                        <div>
+                            <div class="mb-6 p-4 bg-gray-50 rounded-xl border">
+                                <h3 class="font-bold text-slate-900 mb-3">➕ เพิ่มหมวดหมู่สินค้าใหม่ (Product Group)</h3>
+                                <form @submit.prevent="addGroup">
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อหมวดหมู่</label>
+                                        <input type="text" x-model="newGroup.name" placeholder="เช่น การ์ดงานบวช" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">ลิงก์รูปภาพปกหมวดหมู่</label>
+                                        <input type="text" x-model="newGroup.image" placeholder="https://..." class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                                    </div>
+                                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg text-sm transition">บันทึกเพิ่มหมวดหมู่</button>
+                                </form>
+                            </div>
+
+                            <!-- Groups List -->
+                            <div class="p-4 bg-gray-50 rounded-xl border">
+                                <h3 class="font-bold text-slate-900 mb-3">📁 หมวดหมู่ทั้งหมด</h3>
+                                <div class="space-y-2 max-h-60 overflow-y-auto">
+                                    <template x-for="(g, index) in groups" :key="g.id">
+                                        <div class="flex justify-between items-center bg-white p-3 rounded-lg border text-sm">
+                                            <span class="font-medium text-slate-800" x-text="g.name"></span>
+                                            <button @click="deleteGroup(index)" class="text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1 bg-red-50 rounded border border-red-200">ลบ</button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- TAB 3: CHANGE PASSWORD -->
+                    <template x-if="adminTab === 'password'">
+                        <div class="p-4 bg-gray-50 rounded-xl border">
+                            <h3 class="font-bold text-slate-900 mb-3">เปลี่ยนรหัสผ่านแอดมิน</h3>
+                            <form @submit.prevent="changePassword">
+                                <div class="mb-3">
+                                    <input type="password" x-model="newPassword" placeholder="รหัสผ่านใหม่" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                                </div>
+                                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 rounded-lg text-sm transition">บันทึกรหัสผ่านใหม่</button>
+                            </form>
+                            <p x-show="passChanged" class="text-emerald-600 text-xs mt-2">เปลี่ยนรหัสผ่านสำเร็จ!</p>
+                        </div>
+                    </template>
+
+                    <div class="mt-6 pt-4 border-t">
+                        <button @click="logout" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg transition">ออกจากระบบ</button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
     <script>
-        function shopApp() {
+        function blackPigApp() {
             return {
-                currentView: 'frontend',
-                selectedCategory: 'all',
-                isAdminLoggedIn: false,
-                showLoginModal: false,
-                showChangePasswordModal: false,
-                showForgotModal: false,
-                adminEmail: 'admin@blackpig.com',
-                adminPassword: 'blackpig2026',
-                adminSecretKey: 'blackpig2026', // รหัสลับสำหรับกู้คืนรหัสผ่าน
-                loginForm: { email: '', password: '' },
-                passForm: { oldPass: '', newPass: '', confirmPass: '' },
-                forgotForm: { secretKey: '', newPass: '' },
+                isAdminOpen: false,
+                isLoggedIn: sessionStorage.getItem('blackpig_logged') === 'true',
+                passwordInput: '',
+                newPassword: '',
+                loginError: false,
+                passChanged: false,
+                adminTab: 'products',
+                selectedGroup: null,
 
-                categories: [
-                    'การ์ดงานบวช', 'การ์ดงานแต่ง', 'ป้ายไวนิล', 'สติ๊กเกอร์', 'ป้ายสามเหลี่ยม', 'นามบัตร'
+                newGroup: { name: '', image: '' },
+                newProduct: { groupId: '', title: '', desc: '', image: '' },
+
+                // Default Groups
+                defaultGroups: [
+                    { id: 'wedding', name: 'การ์ดงานแต่ง / งานบวช', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=500&auto=format&fit=crop&q=60' },
+                    { id: 'sticker', name: 'สติ๊กเกอร์ฉลากสินค้า', image: 'https://images.unsplash.com/photo-1572375309923-c9e74ce6d813?w=500&auto=format&fit=crop&q=60' },
+                    { id: 'sign', name: 'ป้ายไวนิล / ฟิวเจอร์บอร์ด', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=500&auto=format&fit=crop&q=60' }
                 ],
-                homepage: {
-                    badge: 'BLACK PIG DESIGN',
-                    title: 'แบบงานสำเร็จรูปและตัวอย่างผลงาน',
-                    description: 'เลือกหมวดหมู่ผลงานที่คุณสนใจเพื่อดูแบบที่มีให้เลือกนับร้อยแบบ แจ้งรหัสสินค้ากับแอดมินเพื่อสั่งผลิตได้ทันทีครับ',
-                    coverImage: ''
-                },
-                socials: {
-                    facebook: 'https://facebook.com',
-                    instagram: 'https://instagram.com',
-                    tiktok: 'https://tiktok.com',
-                    line: 'https://line.me'
-                },
-                products: [
-                    { id: 1, code: 'MON-001', category: 'การ์ดงานบวช', name: 'การ์ดงานบวช ลายไทยโมเดิร์น', description: 'กระดาษอาร์ตการ์ดหนา 300 แกรม พิมพ์ทองเค', image: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=600&q=80' },
-                    { id: 2, code: 'WED-001', category: 'การ์ดงานแต่ง', name: 'การ์ดแต่งงาน Minimal Floral', description: 'โทนสีพีชละมุน พร้อมซองเข้าชุด', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80' },
-                    { id: 3, code: 'VNL-001', category: 'ป้ายไวนิล', name: 'ป้ายไวนิลโปรโมชั่นร้านค้า', description: 'พิมพ์สีสดใส ทนแดด ทนฝน เจาะตาไก่ฟรี', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80' },
-                    { id: 4, code: 'STK-001', category: 'สติ๊กเกอร์', name: 'สติ๊กเกอร์ไดคัท ฉลากสินค้า', description: 'กันน้ำ 100% ไดคัทตามทรงพร้อมใช้งาน', image: 'https://images.unsplash.com/photo-1589365252845-aa859c3616f7?auto=format&fit=crop&w=600&q=80' },
-                    { id: 5, code: 'TRI-001', category: 'ป้ายสามเหลี่ยม', name: 'ป้ายตั้งพื้นสามเหลี่ยมเมนู', description: 'โครงเหล็กแข็งแรง ป้ายพับตั้งโต๊ะ', image: 'https://images.unsplash.com/photo-1533750349077-cdcd1ec5f7d3?auto=format&fit=crop&w=600&q=80' },
-                    { id: 6, code: 'CAR-001', category: 'นามบัตร', name: 'นามบัตรพรีเมียม เคลือบด้าน', description: 'กระดาษนำเข้า พิมพ์คมชัด สวยหรู', image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80' }
+
+                // Default Products
+                defaultProducts: [
+                    { id: 1, groupId: 'wedding', code: 'WED-001', title: 'การ์ดแต่งงานพรีเมียม (อาร์ตมัน 260 แกรม)', desc: 'ขนาด 4x6 นิ้ว พร้อมซอง ฟรีออกแบบ', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=500&auto=format&fit=crop&q=60' },
+                    { id: 2, groupId: 'sticker', code: 'STK-001', title: 'สติ๊กเกอร์ฉลากสินค้ากันน้ำ ไดคัท', desc: 'เนื้อเงา/ด้าน ไดคัทตามทรงสวยงาม', image: 'https://images.unsplash.com/photo-1572375309923-c9e74ce6d813?w=500&auto=format&fit=crop&q=60' },
+                    { id: 3, groupId: 'sign', code: 'SGN-001', title: 'ป้ายไวนิลหน้าร้าน คมชัด ทนแดด', desc: 'พับขอบ เจาะตาไก่ พร้อมใช้งาน ฟรีออกแบบ', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=500&auto=format&fit=crop&q=60' }
                 ],
-                showModal: false,
-                isEditMode: false,
-                form: { id: null, code: '', category: 'การ์ดงานบวช', name: '', description: '', image: '' },
-                showOrderModal: false,
-                activeProduct: null,
-                showLightboxModal: false,
-                lightboxProduct: null,
 
-                init() {
-                    const savedProducts = localStorage.getItem('black_pig_products');
-                    if (savedProducts) this.products = JSON.parse(savedProducts);
-
-                    const savedSocials = localStorage.getItem('black_pig_socials');
-                    if (savedSocials) this.socials = JSON.parse(savedSocials);
-
-                    const savedHomepage = localStorage.getItem('black_pig_homepage');
-                    if (savedHomepage) this.homepage = JSON.parse(savedHomepage);
-
-                    const savedPassword = localStorage.getItem('black_pig_admin_password');
-                    if (savedPassword) this.adminPassword = savedPassword;
-
-                    const adminSession = sessionStorage.getItem('black_pig_admin_auth');
-                    if (adminSession === 'true') this.isAdminLoggedIn = true;
+                get groups() {
+                    let saved = localStorage.getItem('blackpig_groups');
+                    return saved ? JSON.parse(saved) : this.defaultGroups;
                 },
 
-                loginAdmin() {
-                    if (this.loginForm.email.trim() === this.adminEmail && this.loginForm.password === this.adminPassword) {
-                        this.isAdminLoggedIn = true;
-                        sessionStorage.setItem('black_pig_admin_auth', 'true');
-                        this.showLoginModal = false;
-                        this.currentView = 'backend';
-                        this.loginForm.email = '';
-                        this.loginForm.password = '';
-                        alert('เข้าสู่ระบบหลังบ้านแอดมินสำเร็จ!');
-                    } else {
-                        alert('อีเมลหรือรหัสผ่านแอดมินไม่ถูกต้อง!');
-                    }
+                get products() {
+                    let saved = localStorage.getItem('blackpig_products');
+                    return saved ? JSON.parse(saved) : this.defaultProducts;
                 },
 
-                logoutAdmin() {
-                    this.isAdminLoggedIn = false;
-                    sessionStorage.removeItem('black_pig_admin_auth');
-                    this.currentView = 'frontend';
-                    alert('ออกจากระบบแอดมินเรียบร้อยแล้ว');
+                getGroupName(groupId) {
+                    let g = this.groups.find(x => x.id === groupId);
+                    return g ? g.name : 'สินค้าทั้งหมด';
                 },
 
-                changePassword() {
-                    if (this.passForm.oldPass !== this.adminPassword) {
-                        alert('รหัสผ่านเดิมไม่ถูกต้อง!');
-                        return;
-                    }
-                    if (this.passForm.newPass !== this.passForm.confirmPass) {
-                        alert('รหัสผ่านใหม่ไม่ตรงกัน!');
-                        return;
-                    }
-                    if (this.passForm.newPass.length < 6) {
-                        alert('รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร');
-                        return;
-                    }
-                    this.adminPassword = this.passForm.newPass;
-                    localStorage.setItem('black_pig_admin_password', this.adminPassword);
-                    this.showChangePasswordModal = false;
-                    this.passForm = { oldPass: '', newPass: '', confirmPass: '' };
-                    alert('เปลี่ยนรหัสผ่านสำเร็จเรียบร้อยแล้วครับ!');
+                getItemsCount(groupId) {
+                    return this.products.filter(p => p.groupId === groupId).length;
                 },
 
-                resetPassword() {
-                    if (this.forgotForm.secretKey !== this.adminSecretKey) {
-                        alert('รหัสลับความปลอดภัยไม่ถูกต้อง!');
-                        return;
-                    }
-                    if (this.forgotForm.newPass.length < 6) {
-                        alert('รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร');
-                        return;
-                    }
-                    this.adminPassword = this.forgotForm.newPass;
-                    localStorage.setItem('black_pig_admin_password', this.adminPassword);
-                    this.showForgotModal = false;
-                    this.forgotForm = { secretKey: '', newPass: '' };
-                    alert('รีเซ็ตรหัสผ่านใหม่สำเร็จแล้ว! กรุณาใช้รหัสผ่านใหม่เข้าสู่ระบบ');
-                    this.showLoginModal = true;
+                getProductsByGroup(groupId) {
+                    return this.products.filter(p => p.groupId === groupId);
                 },
 
-                saveToLocalStorage() {
-                    localStorage.setItem('black_pig_products', JSON.stringify(this.products));
-                },
-
-                saveSocials() {
-                    localStorage.setItem('black_pig_socials', JSON.stringify(this.socials));
-                    alert('บันทึกข้อมูลลิงก์โซเชียลเรียบร้อยแล้วครับ!');
-                },
-
-                saveHomepage() {
-                    localStorage.setItem('black_pig_homepage', JSON.stringify(this.homepage));
-                    alert('บันทึกข้อมูลหน้าแรกเรียบร้อยแล้วครับ!');
-                },
-
-                handleCoverUpload(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => { this.homepage.coverImage = e.target.result; };
-                        reader.readAsDataURL(file);
-                    }
-                },
-
-                get filteredProducts() {
-                    if (this.selectedCategory === 'all') return this.products;
-                    return this.products.filter(p => p.category === this.selectedCategory);
-                },
-
-                generateCode(category) {
-                    const prefixMap = {
-                        'การ์ดงานบวช': 'MON', 'การ์ดงานแต่ง': 'WED', 'ป้ายไวนิล': 'VNL',
-                        'สติ๊กเกอร์': 'STK', 'ป้ายสามเหลี่ยม': 'TRI', 'นามบัตร': 'CAR'
-                    };
-                    const prefix = prefixMap[category] || 'GEN';
-                    const existing = this.products.filter(p => p.code && p.code.startsWith(prefix + '-'));
-                    let nextNum = 1;
-                    if (existing.length > 0) {
-                        const nums = existing.map(p => {
-                            const parts = p.code.split('-');
-                            return parseInt(parts[1]) || 0;
-                        });
-                        nextNum = Math.max(...nums) + 1;
-                    }
-                    return prefix + '-' + String(nextNum).padStart(3, '0');
-                },
-
-                onCategoryChange() {
-                    if (!this.isEditMode) {
-                        this.form.code = this.generateCode(this.form.category);
-                    }
-                },
-
-                openAddModal() {
-                    this.isEditMode = false;
-                    this.form = {
-                        id: null,
-                        code: this.generateCode('การ์ดงานบวช'),
-                        category: 'การ์ดงานบวช',
-                        name: '',
-                        description: '',
-                        image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80'
-                    };
-                    this.showModal = true;
-                },
-
-                openEditModal(product) {
-                    this.isEditMode = true;
-                    this.form = { ...product };
-                    this.showModal = true;
-                },
-
-                closeModal() { this.showModal = false; },
-
-                handleImageUpload(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => { this.form.image = e.target.result; };
-                        reader.readAsDataURL(file);
-                    }
-                },
-
-                saveProduct() {
-                    if (!this.form.image) {
-                        alert('กรุณาอัพโหลดรูปภาพผลงาน');
-                        return;
-                    }
-                    if (this.isEditMode) {
-                        const index = this.products.findIndex(p => p.id === this.form.id);
-                        if (index !== -1) {
-                            this.products[index] = { ...this.form };
+                fixImageUrl(url) {
+                    if (!url) return '';
+                    // แปลงลิงก์ Google Drive ให้แสดงผลรูปภาพได้จริง
+                    if (url.includes('drive.google.com') && url.includes('id=')) {
+                        let idMatch = url.match(/id=([a-zA-Z0-9_-]+)/);
+                        if (idMatch && idMatch[1]) {
+                            return 'https://lh3.googleusercontent.com/d/' + idMatch[1];
                         }
+                    } else if (url.includes('drive.google.com/file/d/')) {
+                        let idMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                        if (idMatch && idMatch[1]) {
+                            return 'https://lh3.googleusercontent.com/d/' + idMatch[1];
+                        }
+                    }
+                    return url;
+                },
+
+                orderProduct(product) {
+                    let text = `สวัสดีค่ะ BLACK PIG DESIGN สนใจสั่งซื้อสินค้า/สอบถามข้อมูล:
+รหัสสินค้า: ${product.code}
+ชื่อสินค้า: ${product.title}
+รายละเอียด: ${product.desc}`;
+                    let encoded = encodeURIComponent(text);
+                    window.open(`https://lin.ee/8iLNK3h`, '_blank');
+                },
+
+                addGroup() {
+                    if(this.newGroup.name && this.newGroup.image) {
+                        let list = this.groups;
+                        let newId = 'grp_' + Date.now();
+                        list.push({ id: newId, name: this.newGroup.name, image: this.newGroup.image });
+                        localStorage.setItem('blackpig_groups', JSON.stringify(list));
+                        this.newGroup = { name: '', image: '' };
+                        alert('เพิ่มหมวดหมู่สำเร็จ!');
+                    }
+                },
+
+                deleteGroup(index) {
+                    if(confirm('ต้องการลบหมวดหมู่นี้ใช่ไหม?')) {
+                        let list = this.groups;
+                        let groupId = list[index].id;
+                        list.splice(index, 1);
+                        localStorage.setItem('blackpig_groups', JSON.stringify(list));
+                        // ลบสินค้าในกลุ่มนี้ด้วย
+                        let prods = this.products.filter(p => p.groupId !== groupId);
+                        localStorage.setItem('blackpig_products', JSON.stringify(prods));
+                    }
+                },
+
+                addProduct() {
+                    if(this.newProduct.groupId && this.newProduct.title && this.newProduct.desc && this.newProduct.image) {
+                        let prods = this.products;
+                        // สร้างรหัสสินค้าอัตโนมัติ (เช่น GRP-001)
+                        let prefix = this.newProduct.groupId.substring(0, 3).toUpperCase();
+                        let groupProds = prods.filter(p => p.groupId === this.newProduct.groupId);
+                        let nextNum = groupProds.length + 1;
+                        let code = prefix + '-' + String(nextNum).padStart(3, '0');
+
+                        prods.unshift({
+                            id: Date.now(),
+                            groupId: this.newProduct.groupId,
+                            code: code,
+                            title: this.newProduct.title,
+                            desc: this.newProduct.desc,
+                            image: this.newProduct.image
+                        });
+                        localStorage.setItem('blackpig_products', JSON.stringify(prods));
+                        this.newProduct = { groupId: '', title: '', desc: '', image: '' };
+                        alert('เพิ่มสินค้าสำเร็จ! รหัสสินค้า: ' + code);
+                    }
+                },
+
+                deleteProduct(index) {
+                    if(confirm('ต้องการลบสินค้านี้ใช่ไหม?')) {
+                        let prods = this.products;
+                        prods.splice(index, 1);
+                        localStorage.setItem('blackpig_products', JSON.stringify(prods));
+                    }
+                },
+
+                getSavedPassword() {
+                    return localStorage.getItem('blackpig_admin_pass') || '123456';
+                },
+                login() {
+                    if (this.passwordInput === this.getSavedPassword()) {
+                        this.isLoggedIn = true;
+                        sessionStorage.setItem('blackpig_logged', 'true');
+                        this.loginError = false;
+                        this.passwordInput = '';
                     } else {
-                        const newProduct = { ...this.form, id: Date.now() };
-                        this.products.unshift(newProduct);
-                    }
-                    this.saveToLocalStorage();
-                    this.closeModal();
-                    alert('บันทึกข้อมูลสำเร็จเรียบร้อยครับ!');
-                },
-
-                deleteProduct(id) {
-                    if (confirm('คุณต้องการลบผลงานนี้ใช่หรือไม่?')) {
-                        this.products = this.products.filter(p => p.id !== id);
-                        this.saveToLocalStorage();
+                        this.loginError = true;
                     }
                 },
-
-                openOrderModal(product) {
-                    this.activeProduct = product;
-                    this.showOrderModal = true;
+                logout() {
+                    this.isLoggedIn = false;
+                    sessionStorage.removeItem('blackpig_logged');
                 },
-
-                openLightbox(product) {
-                    this.lightboxProduct = product;
-                    this.showLightboxModal = true;
+                changePassword() {
+                    if (this.newPassword.trim() !== '') {
+                        localStorage.setItem('blackpig_admin_pass', this.newPassword);
+                        this.passChanged = true;
+                        this.newPassword = '';
+                        setTimeout(() => this.passChanged = false, 3000);
+                    }
                 },
-
-                closeLightbox() {
-                    this.showLightboxModal = false;
-                    this.lightboxProduct = null;
+                forgotPassword() {
+                    alert('รหัสผ่านเริ่มต้นคือ: 123456');
                 }
             }
         }
